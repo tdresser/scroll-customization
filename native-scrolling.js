@@ -1,5 +1,5 @@
 function distributeScroll(scrollState) {
-  console.log("distributeScroll");
+  "use strict";
   scrollState.distributeToScrollChainDescendant();
 
   var deltaX = scrollState.deltaX;
@@ -20,10 +20,7 @@ function distributeScroll(scrollState) {
 }
 
 function applyScroll(scrollState) {
-  console.log("applyScroll");
-  function roundIncreasingMagnitude(x) {
-    return x < 0 ? Math.floor(x) : Math.ceil(x);
-  }
+  "use strict";
 
   var scrollable = this;
   if (this === document.documentElement)
