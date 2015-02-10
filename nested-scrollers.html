@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Nested Scrollers</title>
+<style>
+body {
+  height: 3000px;
+  font: 15px arial, sans-serif;
+  color: white;
+}
+
+* {
+  padding:0;
+  margin:0;
+}
+
+table, tr, td {
+  border-spacing:0;
+}
+</style>
+<script src="native-scrolling.js"></script>
+</head>
+<body>
+
+<script>
+(function() {
+  "use strict";
+
+  var COLORS = ["green", "orange", "purple", "blue"];
+  var COMMENTS = ["Native scroller", "JS applyScroll", "JS distributeScroll", "JS scroller"];
+
+  function addNestedScrollers(numNested) {
+    var size = (numNested - 1) * 200 - 700;
+    var root = null;
+    var leaf = null;
+    var scrollers = [];
+    while (numNested > 0) {
+      var outer_div = document.createElement("div");
+      outer_div.style.width = size + "px";
+      outer_div.style.height = size + "px";
+      outer_div.style.overflow = "scroll";
+      outer_div.id = numNested;
+      scrollers.push(outer_div);
+
+      var inner_div = document.createElement("div");
+      inner_div.style.width = (size + 100) + "px";
+      inner_div.style.height = (size + 100) + "px";
+
+      if (!leaf)
+        root = outer_div;
+      else
+        leaf.appendChild(outer_div);
+
+      leaf = inner_div;
+
+      outer_div.appendChild(inner_div);
+      numNested--;
+      size -= 100;
+    }
+    document.body.appendChild(root);
+    return scrollers;
+  }
+
+  function addLegend() {
+    var legend = document.createElement("table");
+    legend.style.width="100%";
+    var legend_row = document.createElement("tr");
+    legend.appendChild(legend_row);
+    for (var i = 0; i < COLORS.length; ++i) {
+      var td = document.createElement("td");
+      td.style.background = COLORS[i % 4];
+      td.style.padding = "1em";
+      td.innerHTML = COMMENTS[i];
+      legend_row.appendChild(td);
+    }
+    document.body.appendChild(legend);
+  }
+
+  addLegend();
+  var scrollers = addNestedScrollers(10);
+
+  for (var i = 0; i < scrollers.length; ++i) {
+    scrollers[i].firstChild.style.background = COLORS[i % 4];
+    switch(i % 4) {
+      case 0:
+        break;
+      case 1:
+        scrollers[i].applyScroll = applyScroll;
+        break;
+      case 2:
+        scrollers[i].distributeScroll = distributeScroll;
+        break;
+      case 3:
+        scrollers[i].applyScroll = applyScroll;
+        scrollers[i].distributeScroll = distributeScroll;
+        break;
+    }
+  }
+
+  document.documentElement.applyScroll = applyScroll;
+  document.documentElement.distributeScroll = distributeScroll;
+})();
+</script>
+</body>
+</html>
