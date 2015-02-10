@@ -19,6 +19,8 @@ Carousel3DProto.createdCallback = function() {
   container.style.top = "200px";
   var baseTransform = 'translateZ(-100px) rotateX(-20deg) ';
   container.style.webkitTransform = baseTransform;
+  container.style.webkitTransformOrigin = "0 0 0px";
+  container.style.pointerEvents = "none";
 
   var content = document.createElement("content");
   container.appendChild(content);
@@ -44,8 +46,6 @@ Carousel3DProto.createdCallback = function() {
 
     var radius = width / (2 * Math.PI);
 
-    container.style.webkitTransformOrigin = "0% 0% " + (0) + "px";
-
     var angle = 0;
     for (var i = 0; i < children.length; ++i) {
       var child = children[i];
@@ -56,7 +56,6 @@ Carousel3DProto.createdCallback = function() {
           'translateZ(' + radius + 'px)';
       child.style.webkitTransform = transform;
       child.style.position = "absolute";
-      child.style.pointerEvents = "none";
     }
     rootNode.style.display = "block";
   });
