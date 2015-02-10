@@ -14,13 +14,11 @@ body {
   margin:0;
 }
 
-table, tr, td {
-  border-spacing:0;
-}
 </style>
 <script src="hacks.js"></script>
 <script src="native-scrolling-emulation.js"></script>
 <script src="legend.js"></script>
+<script src="native-scrolling-emulation-elements.js"></script>
 </head>
 <body>
 
@@ -29,20 +27,39 @@ table, tr, td {
   "use strict";
 
   function addNestedScrollers(numNested) {
+    function mapToBehaviorIndex(x) {
+      // This just ensures the behaviors here line up with nested-scrollers.html.
+      return 3 - ((x + 1) % 4);
+    }
     var size = (numNested - 1) * 200 - 700;
     var root = null;
     var leaf = null;
     var scrollers = [];
     while (numNested > 0) {
-      var outer_div = document.createElement("div");
+      var outer_div;
+      switch(mapToBehaviorIndex(numNested)) {
+        case 0:
+          outer_div = document.createElement("div");
+          outer_div.style.overflow = "scroll";
+          break;
+        case 1:
+          outer_div = document.createElement("js-apply-scroll");
+          break;
+        case 2:
+          outer_div = document.createElement("js-distribute-scroll");
+          break;
+        case 3:
+          outer_div = document.createElement("js-scroller");
+          break;
+      }
       outer_div.style.width = size + "px";
       outer_div.style.height = size + "px";
-      outer_div.style.overflow = "scroll";
       scrollers.push(outer_div);
 
       var inner_div = document.createElement("div");
       inner_div.style.width = (size + 100) + "px";
       inner_div.style.height = (size + 100) + "px";
+      inner_div.style.background = COLORS[mapToBehaviorIndex(numNested)];
 
       if (!leaf)
         root = outer_div;
@@ -61,24 +78,6 @@ table, tr, td {
 
   addLegend();
   var scrollers = addNestedScrollers(10);
-
-  for (var i = 0; i < scrollers.length; ++i) {
-    scrollers[i].firstChild.style.background = COLORS[i % 4];
-    switch(i % 4) {
-      case 0:
-        break;
-      case 1:
-        scrollers[i].applyScroll = applyScroll;
-        break;
-      case 2:
-        scrollers[i].distributeScroll = distributeScroll;
-        break;
-      case 3:
-        scrollers[i].applyScroll = applyScroll;
-        scrollers[i].distributeScroll = distributeScroll;
-        break;
-    }
-  }
 
   document.documentElement.applyScroll = applyScroll;
   document.documentElement.distributeScroll = distributeScroll;

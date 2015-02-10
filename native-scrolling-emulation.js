@@ -1,5 +1,7 @@
 function distributeScroll(scrollState) {
   "use strict";
+
+  console.log("DS");
   scrollState.distributeToScrollChainDescendant();
 
   var deltaX = scrollState.deltaX;
@@ -22,6 +24,7 @@ function distributeScroll(scrollState) {
 function applyScroll(scrollState) {
   "use strict";
 
+  console.log("AS");
   var scrollable = this;
   if (this === document.documentElement)
     scrollable = document.body;

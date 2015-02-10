@@ -46,27 +46,29 @@ body {
 
 <script src="hacks.js"></script>
 <script>
-var s = document.documentElement.distributeScroll;
-document.documentElement.distributeScroll = function(scrollState) {
-  scrollState.consumeDelta(
-    scrollState.deltaX / 2, scrollState.deltaY / 3);
-  s.call(document.documentElement, scrollState);
-};
+(function() {
+  "use strict";
+  var s = document.documentElement.distributeScroll;
+  document.documentElement.distributeScroll = function(scrollState) {
+    scrollState.consumeDelta(
+      scrollState.deltaX / 2, scrollState.deltaY / 3);
+    s.call(document.documentElement, scrollState);
+  };
 
-var outer = document.getElementById("outer");
-outer.applyScroll = function(scrollState) {
-  var scrollTop = outer.scrollTop;
-  var scrollLeft = outer.scrollLeft;
-  var dx = roundIncreasingMagnitude(scrollState.deltaX);
-  var dy = roundIncreasingMagnitude(scrollState.deltaY);
-  outer.scrollLeft += dx;
-  outer.scrollTop += dy;
+  var outer = document.getElementById("outer");
+  outer.applyScroll = function(scrollState) {
+    var scrollTop = outer.scrollTop;
+    var scrollLeft = outer.scrollLeft;
+    var dx = roundIncreasingMagnitude(scrollState.deltaX);
+    var dy = roundIncreasingMagnitude(scrollState.deltaY);
+    outer.scrollLeft += dx;
+    outer.scrollTop += dy;
 
-  var changedX = scrollLeft != outer.scrollLeft;
-  var changedY = scrollTop != outer.scrollTop;
-  scrollState.consumeDelta(changedX ? scrollState.deltaX : 0,
-                           changedY ? scrollState.deltaY : 0);
-};
+    var changedX = scrollLeft != outer.scrollLeft;
+    var changedY = scrollTop != outer.scrollTop;
+    scrollState.consumeDelta(changedX ? scrollState.deltaX : 0,
+                             changedY ? scrollState.deltaY : 0);
+  }})();
 </script>
 </body>
 </html>
