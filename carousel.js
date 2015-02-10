@@ -1,10 +1,11 @@
-window.onload = function() {
+var Carousel3DProto = Object.create(HTMLElement.prototype);
+Carousel3DProto.createdCallback = function() {
   "use strict";
-
-  var foo = document.getElementById("foo");
-  foo.style.webkitPerspective = "800px";
-  foo.style.width = "100%";
-  foo.style.height = "1000px";
+  var self = this;
+  this.style.display = "none";
+  this.style.webkitPerspective = "800px";
+  this.style.width = "100%";
+  this.style.height = "1000px";
 
   var container = document.createElement("div");
   container.style.webkitTransformStyle = "preserve-3d";
@@ -16,45 +17,51 @@ window.onload = function() {
   var baseTransform = 'translateZ(-100px) rotateX(-20deg) ';
   container.style.webkitTransform = baseTransform;
 
-  while (foo.firstChild) {
-    var child = foo.firstChild;
-    foo.removeChild(foo.firstChild);
+  while (this.firstChild) {
+    var child = this.firstChild;
+    this.removeChild(this.firstChild);
     container.appendChild(child);
   }
 
-  foo.appendChild(container);
+  this.appendChild(container);
 
   var rotation = 0;
 
-  var originalScroll = foo.applyScroll;
-  foo.applyScroll = function(scrollState) {
+  var originalScroll = this.applyScroll;
+  this.applyScroll = function(scrollState) {
     rotation += scrollState.deltaX;
     container.style.webkitTransform = baseTransform + 'rotateY(' + (rotation/10) + 'deg)';
     scrollState.consumeDelta(scrollState.deltaX, 0);
-    originalScroll.call(foo, scrollState);
+    originalScroll.call(this, scrollState);
   }
 
-  // TODO - handle FOUC.
-  var children = container.children;
+  window.addEventListener("load", function() {
+    var children = container.children;
 
-  var width = 0;
-  for (var i = 0; i < children.length; ++i)
-    width += children[i].width;
+    var width = 0;
+    for (var i = 0; i < children.length; ++i)
+      width += children[i].width;
 
-  var radius = width / (2 * Math.PI);
+    var radius = width / (2 * Math.PI);
 
-  container.style.webkitTransformOrigin = "0% 0% " + (0) + "px";
+    container.style.webkitTransformOrigin = "0% 0% " + (0) + "px";
 
-  var angle = 0;
-  for (var i = 0; i < children.length; ++i) {
-    var child = children[i];
-    angle += 360/children.length;
-    var transform =
-        'translateX(' + (-child.width / 2) + 'px)' +
-        'rotateY(' + (angle) + 'deg)' +
-        'translateZ(' + radius + 'px)';
-    child.style.webkitTransform = transform;
-    child.style.position = "absolute";
-    child.style.pointerEvents = "none";
-  }
+    var angle = 0;
+    for (var i = 0; i < children.length; ++i) {
+      var child = children[i];
+      angle += 360/children.length;
+      var transform =
+          'translateX(' + (-child.width / 2) + 'px)' +
+          'rotateY(' + (angle) + 'deg)' +
+          'translateZ(' + radius + 'px)';
+      child.style.webkitTransform = transform;
+      child.style.position = "absolute";
+      child.style.pointerEvents = "none";
+    }
+    self.style.display = "block";
+  });
 };
+
+var Carousel3D = document.registerElement('carousel-3d', {
+  prototype: Carousel3DProto
+});
