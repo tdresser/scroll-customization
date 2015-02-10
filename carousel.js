@@ -2,10 +2,13 @@ var Carousel3DProto = Object.create(HTMLElement.prototype);
 Carousel3DProto.createdCallback = function() {
   "use strict";
   var self = this;
-  this.style.display = "none";
-  this.style.webkitPerspective = "800px";
-  this.style.width = "100%";
-  this.style.height = "1000px";
+
+  var root = this.createShadowRoot();
+  var rootNode = document.createElement("div");
+  rootNode.style.display = "none";
+  rootNode.style.webkitPerspective = "800px";
+  rootNode.style.width = "100%";
+  rootNode.style.height = "1000px";
 
   var container = document.createElement("div");
   container.style.webkitTransformStyle = "preserve-3d";
@@ -17,26 +20,23 @@ Carousel3DProto.createdCallback = function() {
   var baseTransform = 'translateZ(-100px) rotateX(-20deg) ';
   container.style.webkitTransform = baseTransform;
 
-  while (this.firstChild) {
-    var child = this.firstChild;
-    this.removeChild(this.firstChild);
-    container.appendChild(child);
-  }
-
-  this.appendChild(container);
+  var content = document.createElement("content");
+  container.appendChild(content);
+  rootNode.appendChild(container);
+  root.appendChild(rootNode);
 
   var rotation = 0;
 
-  var originalScroll = this.applyScroll;
-  this.applyScroll = function(scrollState) {
+  var originalScroll = rootNode.applyScroll;
+  rootNode.applyScroll = function(scrollState) {
     rotation += scrollState.deltaX;
     container.style.webkitTransform = baseTransform + 'rotateY(' + (rotation/10) + 'deg)';
     scrollState.consumeDelta(scrollState.deltaX, 0);
-    originalScroll.call(this, scrollState);
+    originalScroll.call(rootNode, scrollState);
   }
 
   window.addEventListener("load", function() {
-    var children = container.children;
+    var children = self.children;
 
     var width = 0;
     for (var i = 0; i < children.length; ++i)
@@ -58,7 +58,7 @@ Carousel3DProto.createdCallback = function() {
       child.style.position = "absolute";
       child.style.pointerEvents = "none";
     }
-    self.style.display = "block";
+    rootNode.style.display = "block";
   });
 };
 
