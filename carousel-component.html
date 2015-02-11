@@ -1,0 +1,86 @@
+<template>
+<style>
+:host {
+  -webkit-perspective: 800px;
+  width: 100%;
+  height: 1000px;
+  display:block;
+}
+
+#container {
+  -webkit-transform-style: preserve-3d;
+  width: 100%;
+  height: 1000px;
+  position: absolute;
+  left: 50%;
+  top: 200px;
+  -webkit-transform-origin: 0 0 0px;
+  pointer-events: none;
+  display: none;
+}
+
+</style>
+<div id="container">
+<content></content>
+</div>
+</template>
+
+<script>
+(function() {
+  "use strict";
+  var Carousel3DProto = Object.create(HTMLElement.prototype);
+  var importDoc = document.currentScript.ownerDocument;
+  var baseTransform = 'translateZ(-100px) rotateX(-20deg) ';
+  var container = null;
+
+  var originalScroll = Carousel3DProto.applyScroll;
+  var rotation = 0;
+  Carousel3DProto.applyScroll = function(scrollState) {
+    rotation += scrollState.deltaX;
+    container.style.webkitTransform = baseTransform + 'rotateY(' + (rotation/10) + 'deg)';
+    scrollState.consumeDelta(scrollState.deltaX, 0);
+    originalScroll.call(this, scrollState);
+  };
+
+  Carousel3DProto.createdCallback = function() {
+    "use strict";
+    var self = this;
+
+    var template = importDoc.querySelector('template');
+    var clone = document.importNode(template.content, true);
+
+    container = clone.getElementById("container");
+    container.style.webkitTransform = baseTransform;
+
+    var root = this.createShadowRoot();
+    root.appendChild(clone);
+
+    window.addEventListener("load", function() {
+      var children = self.children;
+
+      var width = 0;
+      for (var i = 0; i < children.length; ++i)
+        width += children[i].width;
+
+      var radius = width / (2 * Math.PI);
+
+      var angle = 0;
+      for (var i = 0; i < children.length; ++i) {
+        var child = children[i];
+        angle += 360/children.length;
+        var transform =
+          'translateX(' + (-child.width / 2) + 'px)' +
+          'rotateY(' + (angle) + 'deg)' +
+          'translateZ(' + radius + 'px)';
+        child.style.webkitTransform = transform;
+        child.style.position = "absolute";
+      }
+      container.style.display="block";
+    });
+  };
+
+  var Carousel3D = document.registerElement('carousel-3d', {
+    prototype: Carousel3DProto
+  });
+})();
+</script>
