@@ -1,22 +1,13 @@
 function distributeScroll(scrollState) {
   "use strict";
 
-  console.log("DS " + this.id);
   scrollState.distributeToScrollChainDescendant();
-  console.log("DONE DS " + this.id);
 
   let deltaX = scrollState.deltaX;
   let deltaY = scrollState.deltaY;
 
-  if (scrollState.shouldPropagate || this.currentlyScrolling) {
-    console.log("NOT BAILING ON APPLYSCROLL");
+  if (scrollState.shouldPropagate || this.currentlyScrolling)
     this.applyScroll(scrollState);
-    console.log("DONE APPLYSCROLL");
-  } else {
-    console.log("BAIL ON APPLYSCROLL");
-    console.log("CURRENTLY SCROLLING? " + this.currentlyScrolling);
-    console.log("Should propagate? " + scrollState.shouldPropagate);
-  }
 
   // TODO - if we expose whether a scroll is the first of a sequence or not, this can be simplified.
   if (this.lastScrollWasInertial && !scrollState.inInertialPhase)
@@ -31,7 +22,6 @@ function distributeScroll(scrollState) {
 function applyScroll(scrollState) {
   "use strict";
 
-  console.log("AS " + this.id);
   let scrollable = this;
   if (this === document.scrollingElement)
     scrollable = document.body;
@@ -52,11 +42,8 @@ function applyScroll(scrollState) {
 
   for (var i = 0; i < distributedNodes.length; ++i) {
     var node = distributedNodes[i];
-    console.log(node);
     if (!(node instanceof Element))
       continue;
-    console.log(node);
-    console.log("FOUND ELEMENT");
     var rect = node.getBoundingClientRect();
     if (top == null)
       top = rect.top
@@ -86,16 +73,9 @@ function applyScroll(scrollState) {
     dy = Math.max(dy, rect.bottom - bottom);
   if (dx > 0)
     dx = Math.min(dx, rect.left - left);
-
-  console.log(distributedNodes);
-  console.log("rect.top " + rect.top);
-  console.log("top " + top);
-
   if (dy > 0)
     dy = Math.min(dy, rect.top - top);
 
-  console.log(this.content.getBoundingClientRect().height);
-  console.log(this.getBoundingClientRect().height);
   let transform = new WebKitCSSMatrix(scrollable.style.transform);
   let scrollLeft = transform.m41;
   let scrollTop = transform.m42;
