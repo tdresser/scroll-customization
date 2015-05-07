@@ -36,8 +36,6 @@ function applyScroll(scrollState) {
   if (this === document.scrollingElement)
     scrollable = document.body;
 
-  console.log(this);
-  console.log(scrollable.container);
   scrollable = scrollable.container;
 
   let dx = scrollState.deltaX;
@@ -45,6 +43,56 @@ function applyScroll(scrollState) {
   if (!dx && !dy)
     return;
 
+  let top = null;
+  let left = null;
+  let bottom = null;
+  let right = null;
+
+  for (var i = 0; i < this.distributedNodes.length; ++i) {
+    var node = this.distributedNodes[i];
+    console.log(node);
+    if (!(node instanceof Element))
+      continue;
+    console.log(node);
+    console.log("FOUND ELEMENT");
+    var rect = node.getBoundingClientRect();
+    if (top == null)
+      top = rect.top
+    else
+      top = Math.min(top, rect.top);
+
+    if (left == null)
+      left = rect.left
+    else
+      left = Math.min(left, rect.left);
+
+    if (bottom == null)
+      bottom = rect.bottom
+    else
+      bottom = Math.max(bottom, rect.bottom);
+
+    if (right == null)
+      right = rect.right
+    else
+      right = Math.max(right, rect.right);
+  }
+
+  rect = this.getBoundingClientRect();
+  if (dx < 0)
+    dx = Math.max(dx, rect.right - right);
+  if (dy < 0)
+    dy = Math.max(dy, rect.bottom - bottom);
+  if (dx > 0)
+    dx = Math.min(dx, rect.left - left);
+
+  console.log("rect.top " + rect.top);
+  console.log("top " + top);
+
+  if (dy > 0)
+    dy = Math.min(dy, rect.top - top);
+
+  console.log(this.content.getBoundingClientRect().height);
+  console.log(this.getBoundingClientRect().height);
   let transform = new WebKitCSSMatrix(scrollable.style.transform);
   let scrollLeft = transform.m41;
   let scrollTop = transform.m42;

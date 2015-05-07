@@ -12,7 +12,7 @@
 </style>
 
 <div id="container">
-<content></content>
+<content id="content"></content>
 </div>
 </template>
 
@@ -27,18 +27,17 @@
       let template = importDoc.querySelector('template');
       let clone = document.importNode(template.content, true);
       this.container = clone.getElementById("container");
-      console.log(clone);
-      console.log(clone.getElementById("container"));
+      this.content = clone.getElementById("content");
+
       let root = this.createShadowRoot();
       root.appendChild(clone);
 
-      console.log("CREATED CALLBACK");
+      this.distributedNodes = this.content.getDistributedNodes();
+
       this.applyScroll = applyScroll;
       this.distributeScroll = distributeScroll;
       this.style.overflow = "hidden";
       this.style.display = "block";
-
-      console.log("CONTAINER IS " + this.container);
     }
   }
 
