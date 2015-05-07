@@ -17,6 +17,8 @@ function distributeScroll(scrollState) {
   let scrolled = deltaX != scrollState.deltaX || deltaY != scrollState.deltaY;
   if (scrolled)
     this.currentlyScrolling = true;
+
+  console.log(scrollState.deltaY);
 }
 
 function applyScroll(scrollState) {
@@ -33,33 +35,17 @@ function applyScroll(scrollState) {
   if (!dx && !dy)
     return;
 
-  let top = Infinity;
-  let left = Infinity;
-  let bottom = -Infinity;
-  let right = -Infinity;
+  let containedRect = this.container.getBoundingClientRect();
+  let rect = this.getBoundingClientRect();
 
-  let distributedNodes = this.content.getDistributedNodes();
-
-  for (var i = 0; i < distributedNodes.length; ++i) {
-    var node = distributedNodes[i];
-    if (!(node instanceof Element))
-      continue;
-    var rect = node.getBoundingClientRect();
-    top = Math.min(top, rect.top);
-    left = Math.min(left, rect.left);
-    bottom = Math.max(bottom, rect.bottom);
-    right = Math.max(right, rect.right);
-  }
-
-  rect = this.getBoundingClientRect();
   if (dx < 0)
-    dx = Math.max(dx, rect.right - right);
+    dx = Math.max(dx, rect.right - containedRect.right);
   if (dy < 0)
-    dy = Math.max(dy, rect.bottom - bottom);
+    dy = Math.max(dy, rect.bottom - containedRect.bottom);
   if (dx > 0)
-    dx = Math.min(dx, rect.left - left);
+    dx = Math.min(dx, rect.left - containedRect.left);
   if (dy > 0)
-    dy = Math.min(dy, rect.top - top);
+    dy = Math.min(dy, rect.top - containedRect.top);
 
   let transform = new WebKitCSSMatrix(scrollable.style.transform);
   let scrollLeft = transform.m41;

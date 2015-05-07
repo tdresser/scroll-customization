@@ -1,18 +1,24 @@
 <template>
 <style>
-:host, #container {
+:host {
   display:block;
 }
 
-#container {
+#clipper {
   width:100%;
   height:100%;
 }
 
+#container {
+  display:inline-block;
+}
+
 </style>
 
+<div id="clipper">
 <div id="container">
-<content id="content"></content>
+<content></content>
+</div>
 </div>
 </template>
 
@@ -27,12 +33,9 @@
       let template = importDoc.querySelector('template');
       let clone = document.importNode(template.content, true);
       this.container = clone.getElementById("container");
-      this.content = clone.getElementById("content");
 
       let root = this.createShadowRoot();
       root.appendChild(clone);
-
-      this.distributedNodes = this.content.getDistributedNodes();
 
       this.applyScroll = applyScroll;
       this.distributeScroll = distributeScroll;
