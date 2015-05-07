@@ -36,6 +36,10 @@ function applyScroll(scrollState) {
   if (this === document.scrollingElement)
     scrollable = document.body;
 
+  console.log(this);
+  console.log(scrollable.container);
+  scrollable = scrollable.container;
+
   let dx = scrollState.deltaX;
   let dy = scrollState.deltaY;
   if (!dx && !dy)
