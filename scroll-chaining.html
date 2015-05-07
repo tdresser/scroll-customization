@@ -22,7 +22,7 @@ body {
   font-size:1.5em;
 }
 
-#dialog {
+#shade {
   position:fixed;
   top:0;
   left:0;
@@ -31,7 +31,7 @@ body {
   background-color:rgba(0, 0, 0, 0.5);
 }
 
-#message {
+#message-scroller {
   left:50%;
   margin-left:-200px;
   top:100px;
@@ -44,7 +44,7 @@ body {
   overflow:scroll;
 }
 
-#message-scroller {
+#message {
   width:100%;
 }
 
@@ -71,12 +71,12 @@ body {
       console.log(this);
     }
 
-    document.getElementById("dialog").distributeScroll = scrollChainNone;
-    document.getElementById("message").distributeScroll = scrollChainNone;
+    document.getElementById("shade").distributeScroll = scrollChainNone;
+    document.getElementById("message-scroller").distributeScroll = scrollChainNone;
 
 
     document.getElementById("done").addEventListener("click", function() {
-      document.getElementById("dialog").style.display = "none";
+      document.getElementById("shade").style.display = "none";
     });
   });
 })();
@@ -91,10 +91,10 @@ Some filler text that is just filler. Some filler text that is just filler. Some
 </p>
 </div>
 
-<div id="dialog">
-<div id="message">
+<div id="shade">
 <div id="message-scroller">
-<p>You need to read this modal dialog for some reason. You need to read this modal dialog for some reason. You need to read this modal dialog for some reason. You need to read this modal dialog for some reason. You need to read this modal dialog for some reason. You need to read this modal dialog for some reason. You need to read this modal dialog for some reason. You need to read this modal dialog for some reason. You need to read this modal dialog for some reason.</p><a id="done" "href="#">Done Reading</a></div>
+<div id="message">
+<p>You need to read this modal shade for some reason. You need to read this modal shade for some reason. You need to read this modal shade for some reason. You need to read this modal shade for some reason. You need to read this modal shade for some reason. You need to read this modal shade for some reason. You need to read this modal shade for some reason. You need to read this modal shade for some reason. You need to read this modal shade for some reason.</p><a id="done" "href="#">Done Reading</a></div>
 </div>
 </div>
 
