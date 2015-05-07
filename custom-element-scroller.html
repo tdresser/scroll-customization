@@ -16,7 +16,6 @@ body {
 }
 
 #test {
-  background-color:green;
   background: repeating-linear-gradient(
     45deg,
     #606dbc,
@@ -33,6 +32,24 @@ js-scroller {
   height:300px;
 }
 
+#native {
+  width:200px;
+  height:200px;
+  overflow:scroll;
+}
+
+#test2 {
+  width:1000px;
+  height:1000px;
+  background: repeating-linear-gradient(
+    45deg,
+    #dbc606,
+    #dbc606 40px,
+    #298465 40px,
+    #298465 80px
+  );
+}
+
 </style>
 <script src="native-scrolling-emulation.js"></script>
 <script src="legend.js"></script>
@@ -41,6 +58,10 @@ js-scroller {
 <body id="body">
 <js-scroller id="js-scroller">
 <div id="test">
+<div id="native">
+<div id="test2">
+</div>
+</div>
 </div>
 </js-scroller>
 
@@ -49,14 +70,6 @@ js-scroller {
   "use strict";
 
   console.log("CREATE ELEMENT");
-//  var jsScroller = document.createElement("js-scroller");
-//  jsScroller.id = "js-scroller";
-//  var test = document.createElement("div");
-//  test.id = "test";
-//  test.innerHTML = "This is a test";
-
-//  jsScroller.appendChild(test);
-//  body.appendChild(jsScroller);
 
   document.documentElement.id = "documentElement";
   document.scrollingElement.id = "scrollingElement";
