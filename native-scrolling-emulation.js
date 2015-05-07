@@ -1,6 +1,5 @@
 function distributeScroll(scrollState) {
   "use strict";
-
   scrollState.distributeToScrollChainDescendant();
 
   let deltaX = scrollState.deltaX;
@@ -17,13 +16,10 @@ function distributeScroll(scrollState) {
   let scrolled = deltaX != scrollState.deltaX || deltaY != scrollState.deltaY;
   if (scrolled)
     this.currentlyScrolling = true;
-
-  console.log(scrollState.deltaY);
 }
 
 function applyScroll(scrollState) {
   "use strict";
-
   let scrollable = this;
   if (this === document.scrollingElement)
     scrollable = document.body;
@@ -38,14 +34,15 @@ function applyScroll(scrollState) {
   let containedRect = this.container.getBoundingClientRect();
   let rect = this.getBoundingClientRect();
 
+  // This ugly rounding is required due to precision issues with getBoundingClientRect().
   if (dx < 0)
-    dx = Math.max(dx, rect.right - containedRect.right);
+    dx = Math.max(dx, (Math.round(10 * rect.right) - Math.round(10 * containedRect.right))/10);
   if (dy < 0)
-    dy = Math.max(dy, rect.bottom - containedRect.bottom);
+    dy = Math.max(dy, (Math.round(10 * rect.bottom) - Math.round(10 * containedRect.bottom))/10);
   if (dx > 0)
-    dx = Math.min(dx, rect.left - containedRect.left);
+    dx = Math.min(dx, (Math.round(10 * rect.left) - Math.round(10 * containedRect.left))/10);
   if (dy > 0)
-    dy = Math.min(dy, rect.top - containedRect.top);
+    dy = Math.min(dy, (Math.round(10 * rect.top) - Math.round(10 * containedRect.top))/10);
 
   let transform = new WebKitCSSMatrix(scrollable.style.transform);
   let scrollLeft = transform.m41;
@@ -57,11 +54,11 @@ function applyScroll(scrollState) {
   scrollable.style.transform = transform;
 
   let scrolled = false;
-  if (transform.m41 != scrollLeft) {
+  if (dx !== 0) {
     scrollState.consumeDelta(scrollState.deltaX, 0);
     scrolled = true;
   }
-  if (transform.m42 != scrollTop) {
+  if (dy !== 0) {
     scrollState.consumeDelta(0, scrollState.deltaY);
     scrolled = true;
   }
