@@ -63,17 +63,18 @@ body {
 <script>
 (function() {
   "use strict";
-  window.addEventListener("load", function() {
-    var scrollChainNone = function(scrollState) {
-      scrollState.distributeToScrollChainDescendant();
-      this.applyScroll(scrollState);
+
+  function scrollChainNone(el) {
+    var originalDistributeScroll = el.distributeScroll;
+    el.distributeScroll = function(scrollState) {
+      originalDistributeScroll.call(this, scrollState);
       scrollState.consumeDelta(scrollState.deltaX, scrollState.deltaY);
-      console.log(this);
     }
+  }
 
-    document.getElementById("shade").distributeScroll = scrollChainNone;
-    document.getElementById("message-scroller").distributeScroll = scrollChainNone;
-
+  window.addEventListener("load", function() {
+    scrollChainNone(document.getElementById("shade"));
+    scrollChainNone(document.getElementById("message-scroller"));
 
     document.getElementById("done").addEventListener("click", function() {
       document.getElementById("shade").style.display = "none";
