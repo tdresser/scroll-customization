@@ -33,6 +33,12 @@
 
   class Carousel3D extends HTMLElement {
     createdCallback() {
+      this.applyScroll = function(scrollState) {
+        this.rotation += scrollState.deltaX;
+        this.container.style.webkitTransform = this.baseTransform + 'rotateY(' + (this.rotation/10) + 'deg)';
+        scrollState.consumeDelta(scrollState.deltaX, 0);
+      }
+
       this.baseTransform = 'translateZ(-100px) rotateX(-20deg) ';
       this.container = null;
       this.rotation = 0;
@@ -70,13 +76,6 @@
         }
         self.container.style.display="block";
       });
-    };
-
-    applyScroll(scrollState) {
-      this.rotation += scrollState.deltaX;
-      this.container.style.webkitTransform = this.baseTransform + 'rotateY(' + (this.rotation/10) + 'deg)';
-      scrollState.consumeDelta(scrollState.deltaX, 0);
-      super.applyScroll(scrollState);
     };
   }
 
