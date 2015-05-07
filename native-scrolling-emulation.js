@@ -20,11 +20,7 @@ function distributeScroll(scrollState) {
 
 function applyScroll(scrollState) {
   "use strict";
-  let scrollable = this;
-  if (this === document.scrollingElement)
-    scrollable = document.body;
-
-  scrollable = scrollable.container;
+  let scrollable = this.container;
 
   let dx = scrollState.deltaX;
   let dy = scrollState.deltaY;
