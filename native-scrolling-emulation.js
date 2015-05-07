@@ -1,14 +1,21 @@
 function distributeScroll(scrollState) {
   "use strict";
 
-  console.log("DS");
+  console.log("DS " + this.id);
   scrollState.distributeToScrollChainDescendant();
+  console.log("DONE DS " + this.id);
 
-  var deltaX = scrollState.deltaX;
-  var deltaY = scrollState.deltaY;
+  let deltaX = scrollState.deltaX;
+  let deltaY = scrollState.deltaY;
 
   if (scrollState.shouldPropagate || this.currentlyScrolling) {
+    console.log("NOT BAILING ON APPLYSCROLL");
     this.applyScroll(scrollState);
+    console.log("DONE APPLYSCROLL");
+  } else {
+    console.log("BAIL ON APPLYSCROLL");
+    console.log("CURRENTLY SCROLLING? " + this.currentlyScrolling);
+    console.log("Should propagate? " + scrollState.shouldPropagate);
   }
 
   // TODO - if we expose whether a scroll is the first of a sequence or not, this can be simplified.
@@ -16,7 +23,7 @@ function distributeScroll(scrollState) {
     this.currentlyScrolling = false;
   this.lastScrollWasInertial = scrollState.inInertialPhase;
 
-  var scrolled = deltaX != scrollState.deltaX || deltaY != scrollState.deltaY;
+  let scrolled = deltaX != scrollState.deltaX || deltaY != scrollState.deltaY;
   if (scrolled)
     this.currentlyScrolling = true;
 }
@@ -24,29 +31,35 @@ function distributeScroll(scrollState) {
 function applyScroll(scrollState) {
   "use strict";
 
-  console.log("AS");
-  var scrollable = this;
-  if (this === document.documentElement)
+  console.log("AS " + this.id);
+  let scrollable = this;
+  if (this === document.scrollingElement)
     scrollable = document.body;
 
-  // TODO - once we support fractional scrollTop and scrollLeft, get rid of this hack.
-  var dx = roundIncreasingMagnitude(scrollState.deltaX);
-  var dy = roundIncreasingMagnitude(scrollState.deltaY);
+  let dx = scrollState.deltaX;
+  let dy = scrollState.deltaY;
   if (!dx && !dy)
     return;
 
-  var scrollLeft = scrollable.scrollLeft;
-  var scrollTop = scrollable.scrollTop;
+  let transform = new WebKitCSSMatrix(scrollable.style.transform);
+  let scrollLeft = transform.m41;
+  let scrollTop = transform.m42;
 
-  scrollable.scrollLeft -= dx;
-  scrollable.scrollTop -= dy;
+  transform.m41 += dx;
+  transform.m42 += dy;
 
-  if (scrollable.scrollLeft != scrollLeft)
+  scrollable.style.transform = transform;
+
+  let scrolled = false;
+  if (transform.m41 != scrollLeft) {
     scrollState.consumeDelta(scrollState.deltaX, 0);
-  if (scrollable.scrollTop != scrollTop)
+    scrolled = true;
+  }
+  if (transform.m42 != scrollTop) {
     scrollState.consumeDelta(0, scrollState.deltaY);
+    scrolled = true;
+  }
 
-  var scrolled = scrollable.scrollLeft != scrollLeft || scrollable.scrollTop != scrollTop;
   if (scrolled) {
     // We need to set currentlyScrolling in both distributeScroll and
     // applyScroll so that if we only override one of these methods,

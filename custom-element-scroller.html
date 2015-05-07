@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Nested Scrollers</title>
+<style>
+body {
+  height: 3000px;
+  font: 15px arial, sans-serif;
+  color: white;
+}
+
+* {
+  padding:0;
+  margin:0;
+}
+
+#test {
+  background-color:green;
+  width:1000px;
+  height:1000px;
+}
+
+js-scroller {
+  width:500px;
+  height:500px;
+}
+
+</style>
+<script src="native-scrolling-emulation.js"></script>
+<script src="legend.js"></script>
+<script src="native-scrolling-emulation-components.js"></script>
+</head>
+
+<body id="body">
+<js-scroller id="js-scroller">
+<div id="test">
+This is a test.
+</div>
+</js-scroller>
+
+<script>
+(function() {
+  "use strict";
+
+  console.log("CREATE ELEMENT");
+//  var jsScroller = document.createElement("js-scroller");
+//  jsScroller.id = "js-scroller";
+//  var test = document.createElement("div");
+//  test.id = "test";
+//  test.innerHTML = "This is a test";
+
+//  jsScroller.appendChild(test);
+//  body.appendChild(jsScroller);
+
+  document.documentElement.id = "documentElement";
+  document.scrollingElement.id = "scrollingElement";
+//  document.scrollingElement.applyScroll = applyScroll;
+//  document.scrollingElement.distributeScroll = distributeScroll;
+})();
+</script>
+</body>
+</html>

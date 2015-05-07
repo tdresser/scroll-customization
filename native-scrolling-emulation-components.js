@@ -1,20 +1,35 @@
 var JSScrollerProto = Object.create(HTMLElement.prototype);
-JSScrollerProto.applyScroll = applyScroll;
-JSScrollerProto.distributeScroll = distributeScroll;
+console.log("ASSIGN CREATED CALLBACK");
+JSScrollerProto.createdCallback = function() {
+  console.log("CREATED CALLBACK");
+  this.applyScroll = applyScroll;
+  this.distributeScroll = distributeScroll;
+  this.style.overflow = "hidden";
+  this.style.display = "block";
+
+  this.container = document.createElement("div");
+  //  var root = this.container.createShadowRoot();
+  var root = document.createElement("content");
+
+  this.container.appendChild(root);
+  this.appendChild(this.container);
+}
 
 var JSApplyScrollProto = Object.create(HTMLElement.prototype);
-JSApplyScrollProto.applyScroll = applyScroll;
+JSApplyScrollProto.createdCallback = function() {
+  this.applyScroll = applyScroll;
+  this.style.overflow = "hidden";
+  this.style.display = "block";
+}
 
 var JSDistributeScrollProto = Object.create(HTMLElement.prototype);
-JSDistributeScrollProto.distributeScroll = distributeScroll;
-
-var protos = [JSScrollerProto, JSApplyScrollProto, JSDistributeScrollProto];
-for (var i = 0; i < protos.length; ++i) {
-  protos[i].createdCallback = function() {
-    this.style.overflow = "scroll";
-    this.style.display = "block";
-  }
+JSDistributeScrollProto.createdCallback = function() {
+  this.distributeScroll = distributeScroll;
+  this.style.overflow = "hidden";
+  this.style.display = "block";
 }
+
+console.log("REGISTERING");
 
 var JSScroller = document.registerElement('js-scroller', {
     prototype: JSScrollerProto

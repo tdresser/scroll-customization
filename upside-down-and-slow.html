@@ -48,11 +48,11 @@ body {
 <script>
 (function() {
   "use strict";
-  var s = document.documentElement.distributeScroll;
-  document.documentElement.distributeScroll = function(scrollState) {
+  var s = document.scrollingElement.distributeScroll;
+  document.scrollingElement.distributeScroll = function(scrollState) {
     scrollState.consumeDelta(
       scrollState.deltaX / 2, scrollState.deltaY / 3);
-    s.call(document.documentElement, scrollState);
+    s.call(document.scrollingElement, scrollState);
   };
 
   var outer = document.getElementById("outer");

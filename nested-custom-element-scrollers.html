@@ -15,7 +15,6 @@ body {
 }
 
 </style>
-<script src="hacks.js"></script>
 <script src="native-scrolling-emulation.js"></script>
 <script src="legend.js"></script>
 <script src="native-scrolling-emulation-components.js"></script>
@@ -79,8 +78,8 @@ body {
   addLegend();
   var scrollers = addNestedScrollers(10);
 
-  document.documentElement.applyScroll = applyScroll;
-  document.documentElement.distributeScroll = distributeScroll;
+  document.scrollingElement.applyScroll = applyScroll;
+  document.scrollingElement.distributeScroll = distributeScroll;
 })();
 </script>
 </body>
