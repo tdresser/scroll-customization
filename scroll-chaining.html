@@ -64,8 +64,15 @@ body {
 (function() {
   "use strict";
   window.addEventListener("load", function() {
-    var scroller = document.getElementById("message-scroller");
-    scroller.distributeScroll = function(scrollState) {}
+    var scroller = document.getElementById("dialog");
+//    scroller.distributeScroll = function(scrollState) {
+//      console.log(this);
+//    }
+
+    var messageScroller = document.getElementById("message-scroller");
+    messageScroller.applyScroll = function(scrollState) {
+      console.log("apply " + this);
+    }
 
     document.getElementById("done").addEventListener("click", function() {
       document.getElementById("dialog").style.display = "none";
