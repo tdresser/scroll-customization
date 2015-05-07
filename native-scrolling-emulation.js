@@ -33,10 +33,10 @@ function applyScroll(scrollState) {
   if (!dx && !dy)
     return;
 
-  let top = null;
-  let left = null;
-  let bottom = null;
-  let right = null;
+  let top = Infinity;
+  let left = Infinity;
+  let bottom = -Infinity;
+  let right = -Infinity;
 
   let distributedNodes = this.content.getDistributedNodes();
 
@@ -45,25 +45,10 @@ function applyScroll(scrollState) {
     if (!(node instanceof Element))
       continue;
     var rect = node.getBoundingClientRect();
-    if (top == null)
-      top = rect.top
-    else
-      top = Math.min(top, rect.top);
-
-    if (left == null)
-      left = rect.left
-    else
-      left = Math.min(left, rect.left);
-
-    if (bottom == null)
-      bottom = rect.bottom
-    else
-      bottom = Math.max(bottom, rect.bottom);
-
-    if (right == null)
-      right = rect.right
-    else
-      right = Math.max(right, rect.right);
+    top = Math.min(top, rect.top);
+    left = Math.min(left, rect.left);
+    bottom = Math.max(bottom, rect.bottom);
+    right = Math.max(right, rect.right);
   }
 
   rect = this.getBoundingClientRect();
