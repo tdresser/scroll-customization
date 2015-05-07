@@ -48,8 +48,10 @@ function applyScroll(scrollState) {
   let bottom = null;
   let right = null;
 
-  for (var i = 0; i < this.distributedNodes.length; ++i) {
-    var node = this.distributedNodes[i];
+  let distributedNodes = this.content.getDistributedNodes();
+
+  for (var i = 0; i < distributedNodes.length; ++i) {
+    var node = distributedNodes[i];
     console.log(node);
     if (!(node instanceof Element))
       continue;
@@ -85,6 +87,7 @@ function applyScroll(scrollState) {
   if (dx > 0)
     dx = Math.min(dx, rect.left - left);
 
+  console.log(distributedNodes);
   console.log("rect.top " + rect.top);
   console.log("top " + top);
 

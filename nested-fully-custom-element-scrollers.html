@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Nested Scrollers</title>
+<link rel="import" href="scroller-component.html">
+<style>
+body {
+  height: 3000px;
+  font: 15px arial, sans-serif;
+  color: white;
+}
+
+* {
+  padding:0;
+  margin:0;
+}
+
+</style>
+<script src="native-scrolling-emulation.js"></script>
+</head>
+<body>
+
+<script>
+(function() {
+  "use strict";
+
+  var backgrounds = [
+    "repeating-linear-gradient(\
+    45deg,\
+    #606dbc,\
+    #606dbc 40px,\
+    #465298 40px,\
+    #465298 80px\
+  )",
+    "repeating-linear-gradient(\
+    45deg,\
+    #dbc606,\
+    #dbc606 40px,\
+    #298465 40px,\
+    #298465 80px\
+  )"
+  ];
+
+  function addNestedScrollers(numNested) {
+    function mapToBehaviorIndex(x) {
+      return (x + 1) % 2;
+    }
+    var size = (numNested - 1) * 200 - 700;
+    var root = null;
+    var leaf = null;
+    var scrollers = [];
+    while (numNested > 0) {
+      var outer_div;
+      switch(mapToBehaviorIndex(numNested)) {
+        case 0:
+          outer_div = document.createElement("div");
+          outer_div.style.overflow = "scroll";
+          break;
+        case 1:
+          outer_div = document.createElement("js-scroller");
+          break;
+      }
+      outer_div.style.width = size + "px";
+      outer_div.style.height = size + "px";
+      scrollers.push(outer_div);
+
+      var inner_div = document.createElement("div");
+      inner_div.class = "inner_div";
+      inner_div.style.width = (size + 100) + "px";
+      inner_div.style.height = (size + 100) + "px";
+      inner_div.style.background = backgrounds[mapToBehaviorIndex(numNested)];
+
+      if (!leaf)
+        root = outer_div;
+      else
+        leaf.appendChild(outer_div);
+
+      leaf = inner_div;
+
+      outer_div.appendChild(inner_div);
+      numNested--;
+      size -= 100;
+    }
+    document.body.appendChild(root);
+    return scrollers;
+  }
+
+  var scrollers = addNestedScrollers(10);
+
+//  document.scrollingElement.applyScroll = applyScroll;
+//  document.scrollingElement.distributeScroll = distributeScroll;
+})();
+</script>
+</body>
+</html>
