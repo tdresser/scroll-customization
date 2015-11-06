@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Pull to Refresh</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script type="text/javascript" src="scroll-customization-syntax-sugar.js"></script>
+</head>
+
+<body>
+  <div id="outer">
+    <header><i id="arrow" class="material-icons">get_app</i></header>
+    <div id="middle">
+      <div id="inner">
+        <h2>I am scrollable</h2>
+        <p>Normally inner scroller is scrolled first.
+          <br/> But we are reversing the order. </p>
+        <p>The demo needs touch scrolling, scroll customizations API, and main thread scrolling. So emulate mobile and use with flags: <pre>--enable-blink-features=ScrollCustomization</pre> <pre>--disable-threaded-scrolling</pre></p>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script>
+'use strict';
+
+if (!outer.setDistributeScroll)
+  warn("ScrollCustomization API is missing. Demo does not work.");
+
+for (let scroller of[outer, middle, inner])
+  mixinScrollCustomizationSyntaxSugar(outer); // gives better syntax
+
+const headerHeight = 230;
+outer.scrollTop = headerHeight;
+
+const original = outer.distributeScroll;
+outer.distributeScroll = function(scrollState) {
+  if (scrollState.deltaY > 0 || this.scrollTop > headerHeight) {
+    original.call(this, scrollState);
+  } else {
+    this.applyScroll(scrollState); // scroll self before descendants
+    scrollState.distributeToScrollChainDescendant();
+  }
+
+  // scroll synced or triggered animation
+  rotateArrow(this.scrollTop);
+
+  if (scrollState.isEnding)
+    setTimeout(closeHeader, 500);
+};
+
+function closeHeader() {
+  if (outer.scrollTop >= headerHeight)
+    return;
+  window.requestAnimationFrame(closeHeader);
+  var scollTop = outer.scrollTop;
+  outer.scrollTop = Math.min(headerHeight,
+    scollTop + headerHeight / 15);
+  rotateArrow(scollTop);
+}
+
+// rotate arrow 180 degree starting half way through
+function rotateArrow(scrollTop) {
+  let progress = Math.max(0, 0.5 - (scrollTop / headerHeight));
+  arrow.style.transform = 'rotate(' + (progress) * 360 + 'deg)';
+}
+
+function warn(message) {
+  document.body.innerHTML = "<span class='warning'>" + message + "</span>" + document.body.innerHTML;
+}
+</script>
+
+<style>
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+#outer {
+  width: 100%;
+  height: 100vh;
+  background: #8BC34A;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding-top: 230px;
+  font-size: 50px;
+  position: relative;
+}
+
+#middle {
+  width: 100%;
+  height: 200vh;
+  overflow-y: scroll;
+}
+
+#inner {
+  width: 100%;
+  height: 300vh;
+  overflow-x: scroll;
+  background: linear-gradient(to bottom, #C8E6C9, white);
+  font-size: 0.8em;
+}
+
+header {
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 0px;
+  margin-bottom: 5px;
+}
+
+#arrow {
+  font-size: 96px;
+  margin: auto;
+}
+
+.warning {
+  color: red;
+  font-weight: bold;
+  position: absolute;
+  top: 50%;
+  z-index: 10;
+  padding: 1em;
+  background: white;
+}
+</style>
+
