@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Scroll Effects</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script type="text/javascript" src="scroll-customization-syntax-sugar.js"></script>
+</head>
+
+<body>
+  <div id="scroller">
+    <div id="content"></div>
+  </div>
+  <div id="controls">
+    <label> Friction factor </label>: 0
+    <input id='frictionFactor' type='range' min=0 max=1 step=0.1></input> 1
+  </div>
+  <div id="smiley" class="material-icons">insert_emoticon</div>
+</body>
+<script>
+'use strict';
+
+if (!scroller.setDistributeScroll)
+  warn("ScrollCustomization API is missing. Demo does not work.");
+
+mixinScrollCustomizationSyntaxSugar(scroller); // gives better syntax
+
+FrictionModifier(scroller);
+ScrollTrigger(scroller, 'vertical', 100, 600, rotate(smiley));
+ScrollTrigger(scroller, 'vertical', 700, 1200, enlarge(smiley));
+ScrollTrigger(scroller, 'horizontal', 100, 500, slideUp(smiley));
+
+// Slow down scroll speed by a factor
+function FrictionModifier(element) {
+  const original = element.applyScroll;
+  element.applyScroll = function(scrollState) {
+    // Consume a percent of the delta before applying it.
+    // Note that factore should be < 1. Increasing the user scroll delta is not allowed.
+    const factor = +(frictionFactor.value);
+    scrollState.consumeDelta(scrollState.deltaX * factor, scrollState.deltaY * factor);
+    original.call(this, scrollState);
+  }
+}
+
+// Monitors scroll position to trigger effect between certain offsets
+function ScrollTrigger(element, axis, start, end, progressCallback) {
+  const original = element.applyScroll;
+  element.applyScroll = function(scrollState) {
+    const position = axis == 'vertical' ? element.scrollTop : element.scrollLeft;
+    if (start < position && position < end)
+      progressCallback((position - start) / (end - start)); // report progress
+
+
+    original.call(this, scrollState);
+  }
+}
+
+function rotate(element) {
+  return function(progress) {
+    updateTransform(element, 'rotate', progress * 360 + 'deg');
+  }
+}
+
+function enlarge(element) {
+  return function(progress) {
+    const scale = 1 + progress * 2;
+    updateTransform(element, 'scale', scale);
+  }
+}
+
+function slideUp(element) {
+  return function(progress) {
+    updateTransform(element, 'translateY', Math.sin(2 * Math.PI * progress) * 100 + 'px');
+  }
+}
+
+function updateTransform(element, effect, value) {
+  let transform = element.style.transform;
+  transform = transform.replace(RegExp(effect + '\\(.*?\\)'), '');
+  transform += effect + '(' + value + ')';
+  element.style.transform = transform;
+}
+
+function warn(message) {
+  document.body.innerHTML = "<span class='warning'>" + message + "</span>" + document.body.innerHTML;
+}
+</script>
+<style>
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+#scroller {
+  width: 100vw;
+  height: 100vh;
+  background: #8BC34A;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  position: relative;
+}
+
+#content {
+  width: 300vw;
+  height: 300vh;
+  background-image: 
+    repeating-linear-gradient(
+      33deg,
+      rgba(102, 204, 102, 0.5),
+      rgba(102, 204, 102, 0.5) 5vh,
+      rgb(92, 184, 92) 5vh,
+      rgb(92, 184, 92) 10vh),
+    linear-gradient(to bottom right, #8BC34A, white);
+}
+
+#smiley {
+  display: block;
+  position: absolute;
+  top: 40%;
+  left: 40%;
+  font-size: 96px;
+}
+
+#controls {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  font-family: sans-serif;
+}
+
+#controls input {
+  display: inline;
+}
+
+.warning {
+  color: red;
+  font-weight: bold;
+  position: absolute;
+  top: 50%;
+  z-index: 10;
+  padding: 1em;
+  background: white;
+}
+</style>
