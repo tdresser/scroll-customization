@@ -38,8 +38,7 @@
         this.container.style.webkitTransform = this.baseTransform + 'rotateY(' + (this.rotation/10) + 'deg)';
         scrollState.consumeDelta(scrollState.deltaX, 0);
       }
-
-      this.setApplyScroll(applyScroll, "disable-native-scroll");
+      this.setApplyScroll(applyScroll.bind(this), "disable-native-scroll");
 
       this.baseTransform = 'translateZ(-100px) rotateX(-20deg) ';
       this.container = null;
