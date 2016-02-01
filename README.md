@@ -7,5 +7,4 @@ A limited version of the API (for touch scroll gestures on main thread scrolling
 
 Documentation is [here](https://docs.google.com/a/chromium.org/document/d/1VnvAqeWFG9JFZfgG5evBqrLGDZYRE5w6G5jEDORekPY/edit?pli=1#heading=h.kd0gtwwz5bf9).
 
-Latest version requires a custom build that includes this [Chrome patch](https://codereview.chromium.org/850443002/) in progress.
 
